@@ -1,7 +1,7 @@
 /*
  * @Author: Lili Liang
  * @Date: 2021-02-04 22:56:42
- * @LastEditTime: 2021-02-15 01:06:58
+ * @LastEditTime: 2021-02-18 00:45:06
  * @LastEditors: Please set LastEditors
  * @Description: Solver algorithm in #3 Paper
  * @FilePath: \Paper_3\PM-Coding.cpp
@@ -15,12 +15,15 @@ const int MAXN = 1e4 + 10;
 
 #define LOCAL
 
-int numberedVertex[MAXN][MAXN];
+ll numberedVertex[MAXN][MAXN];
+//initial hard clause, soft clause
 vector<ll> hard_clause[MAXN], soft_clause[MAXN];
+//numbered hard clause, soft clause
 vector<ll> hard_clause_numbered_vector[MAXN], soft_clause_numbered_vector[MAXN];
 
-int sortVertex[MAXN];
-map<ll, ll> sortVertexMap;
+int sortNumberedVertexMatrix[MAXN][MAXN];
+vector<ll> sortVertex, deleteVertex;
+set<ll> deleteVertexRow;
 
 vector<string> Split(const string& str, const string& delim) {
 	vector<string> res;
@@ -48,10 +51,38 @@ bool cmp_val(const PAIR &left, const PAIR &right){
     return left.second > right.second;
 }
 
+vector<ll> SortVertexFunc1(int ver, int hard_clause_num){
+    int sortVertexNum[MAXN];
+    map<ll, ll> sortVertexMap;
+    memset(sortVertexNum, 0, sizeof(sortVertexNum));
+    for(int i = 0; i < hard_clause_num;i++){
+        for(int j = 0; j < hard_clause[i].size(); j++){
+            int temp = abs(hard_clause[i][j]);
+            // cout << temp << endl;
+            sortVertexNum[temp]++;
+        }
+    }
+    cout << "sortVertexNum: " << endl;
+    for(int i = 1; i <= ver; i++){
+        cout << sortVertexNum[i] << " ";
+        pair<ll, ll> p(i, sortVertexNum[i]);
+        sortVertexMap.insert(p);
+    }
+    puts("");
+    vector<PAIR> vec(sortVertexMap.begin(), sortVertexMap.end());
+    sort(vec.begin(), vec.end(), cmp_val);
+    vector<PAIR>:: iterator itor = vec.begin();
+    for(; itor != vec.end(); itor++){
+        cout << itor -> first << " " << itor -> second << endl;
+        sortVertex.push_back(itor -> first);
+    }
+    return sortVertex;
+}
+
 // int main(int argc, char **argv) {
 //     int k = atoi(argv[2]);
 int main(){ 
-    int k;
+    int k, sort;
 
     int ver, clauseNum, hard_clause_weight;
     string hard_clause_weight_string;
@@ -64,15 +95,15 @@ int main(){
     int hard_clause_numbered = 0, soft_clause_numbered = 0;
 
     #ifdef LOCAL
-    cout << "Please enter the value of K:";
-    cin >> k;
+    cout << "Please enter the value of K, sort:";
+    cin >> k >> sort;
     #endif
 
     /*
     * Read file
     */ 
     string fileString;
-    fstream in("V2.wcnf", ios::in);
+    fstream in("V1.wcnf", ios::in);
     if(!in) {
         cout << "Read file error!" << endl;
     }
@@ -182,29 +213,6 @@ int main(){
     }
     #endif
 
-    memset(sortVertex, 0, sizeof(sortVertex));
-    for(int i = 0; i < hard_clause_num;i++){
-        for(int j = 0; j < hard_clause[i].size(); j++){
-            int temp = abs(hard_clause[i][j]);
-            cout << temp << endl;
-            sortVertex[temp]++;
-        }
-    }
-    // sort(sortVertex, sortVertex + ver, cmp);
-    cout << "sortVertex: " << endl;
-    for(int i = 1; i <= ver; i++){
-        cout << sortVertex[i] << " ";
-        pair<ll, ll> p(i, sortVertex[i]);
-        sortVertexMap.insert(p);
-    }
-    puts("");
-    vector<PAIR> vec(sortVertexMap.begin(), sortVertexMap.end());
-    sort(vec.begin(), vec.end(), cmp_val);
-    vector<PAIR>:: iterator itor = vec.begin();
-    for(; itor != vec.end(); itor++){
-        cout << itor -> first << " " << itor -> second << endl;
-    }
-
     /*
     * hard_clause
     */
@@ -283,19 +291,120 @@ int main(){
         puts("");
     }
 
-    puts("-------------------------");
-    cout << "clause: " << endl;
-    for(int i = 0; i < hard_clause_numbered; i++){
-        for(int j = 0; j < hard_clause_numbered_vector[i].size(); j++){
-            cout << hard_clause_numbered_vector[i][j] << " ";
+    /*
+    * SortVertex
+    */
+    puts("");
+    if(sort == 1){
+        sortVertex = SortVertexFunc1(ver, hard_clause_num);
+    }
+    cout << "sortVertex:" << endl;
+    for(int i = 0; i < sortVertex.size();i++){
+        cout << sortVertex[i] << " ";
+    }
+    for(int i = 0; i < sortVertex.size(); i++) {
+        int temp1 = sortVertex[i];
+        int temp2;
+        for(int j = 1; j <= k; j++) {
+            temp2 = numberedVertex[temp1][j];
+            sortNumberedVertexMatrix[i + 1][j] = temp2;
+        }
+    }
+    cout << "\nsortNumberedVertexMatrix:" << endl;;
+    for(int i = 1; i <= ver; i++) {
+        for(int j = 1; j <= k; j++) {
+            cout << sortNumberedVertexMatrix[i][j] << " ";
         }
         puts("");
     }
+    for(int i = 1;i <= k;i++){
+        for(int j = 1;j <= k;j++){
+            if(i < j){
+                deleteVertex.push_back(sortNumberedVertexMatrix[i][j]);
+                sortNumberedVertexMatrix[i][j] = 0;
+            }
+        }
+    }
+    cout << "changed sortNumberedVertexMatrix:" << endl;
+    for(int i = 1; i <= ver; i++) {
+        for(int j = 1; j <= k; j++) {
+            if(sortNumberedVertexMatrix[i][j]){
+                cout << sortNumberedVertexMatrix[i][j] << " ";
+            }
+        }
+        puts("");
+    }
+
+    /*
+    * DeleteVertex
+    */
+    cout << "deleteVertex:" << endl;
+    for(int i = 0;i < deleteVertex.size();i++){
+        cout << deleteVertex[i] << " ";
+    }
+    puts("");
+    cout << "now clause:" << endl;
+    for(int i = 0; i < hard_clause_numbered; i++){
+        for(int j = 0; j < hard_clause_numbered_vector[i].size(); j++){
+            cout << hard_clause_numbered_vector[i][j] << " ";
+
+            int temp = hard_clause_numbered_vector[i][j];
+            for(int x = 0;x < deleteVertex.size();x++){
+                if(abs(temp) == deleteVertex[x]){
+                    if(temp > 0){
+                        hard_clause_numbered_vector[i][j] = 0;
+                    }else if(temp < 0){
+                        deleteVertexRow.insert(i);
+                    }
+                }
+            }
+        }
+        puts("");
+    }
+    puts("");
     for(int i = 0; i < soft_clause_numbered; i++){
         for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
             cout << soft_clause_numbered_vector[i][j] << " ";
+
+            int temp = soft_clause_numbered_vector[i][j];
+            for(int x = 0;x < deleteVertex.size();x++){
+                if(abs(temp) == deleteVertex[x]){
+                    soft_clause_numbered_vector[i][j] = 0;
+                }
+            }
         }
         puts("");
+    }
+    
+    puts("-------------------------");
+    cout << "update clause: " << endl;
+    for(int i = 0; i < hard_clause_numbered; i++){
+        if(deleteVertexRow.count(i) == 0){
+            int putFlag = 0;
+            for(int j = 0; j < hard_clause_numbered_vector[i].size(); j++){
+                if(hard_clause_numbered_vector[i][j] != 0){
+                    cout << hard_clause_numbered_vector[i][j] << " ";
+                    putFlag = 1;
+                }
+            }
+            if(putFlag == 1){
+                puts("");
+            }
+            
+        }
+    }
+    puts("");
+    for(int i = 0; i < soft_clause_numbered; i++){
+        int putFlag = 0;
+        for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
+            if(soft_clause_numbered_vector[i][j] != 0){
+                cout << soft_clause_numbered_vector[i][j] << " ";
+                putFlag = 1;
+            }
+        }
+        if(putFlag == 1){
+            puts("");
+        }
     }
     system("pause");
     return 0;
