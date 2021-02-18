@@ -1,7 +1,7 @@
 /*
  * @Author: Lili Liang
  * @Date: 2021-02-04 22:56:42
- * @LastEditTime: 2021-02-18 00:45:06
+ * @LastEditTime: 2021-02-18 23:48:41
  * @LastEditors: Please set LastEditors
  * @Description: Solver algorithm in #3 Paper
  * @FilePath: \Paper_3\PM-Coding.cpp
@@ -11,17 +11,17 @@ using namespace std;
 
 typedef long long ll;
 typedef pair<ll, ll> PAIR;
-const int MAXN = 1e4 + 10;
+const int MAXN = 1e6 + 10;
 
-#define LOCAL
+// #define LOCAL
 
-ll numberedVertex[MAXN][MAXN];
+ll numberedVertex[MAXN][22];
 //initial hard clause, soft clause
 vector<ll> hard_clause[MAXN], soft_clause[MAXN];
 //numbered hard clause, soft clause
 vector<ll> hard_clause_numbered_vector[MAXN], soft_clause_numbered_vector[MAXN];
 
-int sortNumberedVertexMatrix[MAXN][MAXN];
+int sortNumberedVertexMatrix[MAXN][30];
 vector<ll> sortVertex, deleteVertex;
 set<ll> deleteVertexRow;
 
@@ -43,11 +43,7 @@ vector<string> Split(const string& str, const string& delim) {
 	return res;
 }
 
-bool cmp(int x, int y){
-	return x > y;
-}
-
-bool cmp_val(const PAIR &left, const PAIR &right){
+bool CompareMapValue(const PAIR &left, const PAIR &right){
     return left.second > right.second;
 }
 
@@ -58,22 +54,30 @@ vector<ll> SortVertexFunc1(int ver, int hard_clause_num){
     for(int i = 0; i < hard_clause_num;i++){
         for(int j = 0; j < hard_clause[i].size(); j++){
             int temp = abs(hard_clause[i][j]);
-            // cout << temp << endl;
             sortVertexNum[temp]++;
         }
     }
-    cout << "sortVertexNum: " << endl;
+    #ifdef LOCAL
+    cout << "SortVertexNum: " << endl;
+    #endif
     for(int i = 1; i <= ver; i++){
-        cout << sortVertexNum[i] << " ";
+        #ifdef LOCAL
+        cout << "ver :" << i << " num : " << sortVertexNum[i] << endl;
+        #endif
+
         pair<ll, ll> p(i, sortVertexNum[i]);
         sortVertexMap.insert(p);
     }
-    puts("");
+    #ifdef LOCAL
+    cout << "SortVertexMap:" << endl;
+    #endif
     vector<PAIR> vec(sortVertexMap.begin(), sortVertexMap.end());
-    sort(vec.begin(), vec.end(), cmp_val);
+    sort(vec.begin(), vec.end(), CompareMapValue);
     vector<PAIR>:: iterator itor = vec.begin();
     for(; itor != vec.end(); itor++){
+        #ifdef LOCAL
         cout << itor -> first << " " << itor -> second << endl;
+        #endif
         sortVertex.push_back(itor -> first);
     }
     return sortVertex;
@@ -82,7 +86,7 @@ vector<ll> SortVertexFunc1(int ver, int hard_clause_num){
 // int main(int argc, char **argv) {
 //     int k = atoi(argv[2]);
 int main(){ 
-    int k, sort;
+    int k = 3, sort = 1;
 
     int ver, clauseNum, hard_clause_weight;
     string hard_clause_weight_string;
@@ -94,16 +98,16 @@ int main(){
     //number of numbered hard clause, soft_clause
     int hard_clause_numbered = 0, soft_clause_numbered = 0;
 
-    #ifdef LOCAL
-    cout << "Please enter the value of K, sort:";
-    cin >> k >> sort;
-    #endif
+    // #ifdef LOCAL
+    // cout << "Please enter the value of K, sort:";
+    // cin >> k >> sort;
+    // #endif
 
     /*
     * Read file
     */ 
     string fileString;
-    fstream in("V1.wcnf", ios::in);
+    fstream in("V4.wcnf", ios::in);
     if(!in) {
         cout << "Read file error!" << endl;
     }
@@ -113,7 +117,6 @@ int main(){
         }else if(fileString[0] == 'p'){
             std::vector<string> res = Split(fileString, " ");
             int len = res.size();
-            // cout << len << endl;
 
             //hard_clause_weight
             string x1 = res[len - 1];
@@ -141,7 +144,6 @@ int main(){
         }else if(fileString[0] == hard_clause_weight_string[0]){
             std::vector<string> res = Split(fileString, " ");
             int len = res.size();
-            // cout << "len: " << len << endl;
             
             // cout << "clauseNumTemp: " << clauseNumTemp << endl; 
             for(int i = 1; i < len;i++){
@@ -173,7 +175,6 @@ int main(){
             
             std::vector<string> res = Split(fileString, " ");
             int len = res.size();
-            // cout << "len: " << len << endl;
 
             // cout << "clauseNumTemp: " << clauseNumTemp << endl; 
             for(int i = 1; i < len;i++){
@@ -216,12 +217,13 @@ int main(){
     /*
     * hard_clause
     */
-    // cout << "clauseNumTemp: " << clauseNumTemp << endl;
+    #ifdef LOCAL
+    puts("-------------------------");
+    #endif
     for(int i = 0; i < hard_clause_num;i++){
         // puts("");
         vector<ll> hard_clause_numbered_temp;
         for(int j = 0; j < hard_clause[i].size(); j++){
-
             // cout << hard_clause[i][j] << " " << endl;
             
             int temp1 = hard_clause[i][j];
@@ -236,18 +238,25 @@ int main(){
                 }
             }
         }
+        #ifdef LOCAL
         cout << "hard_clause_numbered_temp: " << endl;
         for(int j = 0; j < hard_clause_numbered_temp.size(); j++){
             cout << hard_clause_numbered_temp[j] << " ";
         }
         puts("");
+        #endif
 
         int cnt = 0;
+        #ifdef LOCAL
         cout << "hard_clause : " << endl;
+        #endif
         for(int j = 0; j < k; j++){
             for(int x = 0; x < hard_clause_numbered_temp.size(); x++) {
                 if( (x - cnt) % k == 0){
+                    #ifdef LOCAL
                     cout << hard_clause_numbered_temp[x] << " ";
+                    #endif
+
                     cnt = x;
                     int temp = hard_clause_numbered_temp[x];
                     hard_clause_numbered_vector[hard_clause_numbered].push_back(temp);
@@ -255,7 +264,9 @@ int main(){
             }
             cnt++;
             hard_clause_numbered++;
+            #ifdef LOCAL
             puts("");
+            #endif
         }
     }
 
@@ -266,7 +277,6 @@ int main(){
         // puts("");
         vector<ll> soft_clause_numbered_temp;
         for(int j = 0; j < soft_clause[i].size(); j++){
-
             // cout << soft_clause[i][j] << " " << endl;
             
             int temp1 = soft_clause[i][j];
@@ -281,27 +291,38 @@ int main(){
                 }
             }
         }
+        #ifdef LOCAL
         cout << "soft_clause_numbered_temp: " << endl;
+        #endif
         for(int j = 0; j < soft_clause_numbered_temp.size(); j++){
+            #ifdef LOCAL
             cout << soft_clause_numbered_temp[j] << " ";
+            #endif
+
             int temp = soft_clause_numbered_temp[j];
             soft_clause_numbered_vector[soft_clause_numbered].push_back(temp);
         }
         soft_clause_numbered++;
+        #ifdef LOCAL
         puts("");
+        #endif
     }
 
     /*
     * SortVertex
     */
-    puts("");
+    #ifdef LOCAL
+    puts("-------------------------");
+    #endif
     if(sort == 1){
         sortVertex = SortVertexFunc1(ver, hard_clause_num);
     }
-    cout << "sortVertex:" << endl;
+    #ifdef LOCAL
+    cout << "SortVertex:" << endl;
     for(int i = 0; i < sortVertex.size();i++){
         cout << sortVertex[i] << " ";
     }
+    #endif
     for(int i = 0; i < sortVertex.size(); i++) {
         int temp1 = sortVertex[i];
         int temp2;
@@ -310,13 +331,15 @@ int main(){
             sortNumberedVertexMatrix[i + 1][j] = temp2;
         }
     }
-    cout << "\nsortNumberedVertexMatrix:" << endl;;
+    #ifdef LOCAL
+    cout << "\nSortNumberedVertexMatrix:" << endl;;
     for(int i = 1; i <= ver; i++) {
         for(int j = 1; j <= k; j++) {
             cout << sortNumberedVertexMatrix[i][j] << " ";
         }
         puts("");
     }
+    #endif
     for(int i = 1;i <= k;i++){
         for(int j = 1;j <= k;j++){
             if(i < j){
@@ -325,7 +348,8 @@ int main(){
             }
         }
     }
-    cout << "changed sortNumberedVertexMatrix:" << endl;
+    #ifdef LOCAL
+    cout << "Changed sortNumberedVertexMatrix:" << endl;
     for(int i = 1; i <= ver; i++) {
         for(int j = 1; j <= k; j++) {
             if(sortNumberedVertexMatrix[i][j]){
@@ -334,19 +358,26 @@ int main(){
         }
         puts("");
     }
+    #endif
+    
 
     /*
     * DeleteVertex
     */
-    cout << "deleteVertex:" << endl;
+    #ifdef LOCAL
+    puts("-------------------------");
+    cout << "DeleteVertex:" << endl;
     for(int i = 0;i < deleteVertex.size();i++){
         cout << deleteVertex[i] << " ";
     }
     puts("");
-    cout << "now clause:" << endl;
+    cout << "Now clause:" << endl;
+    #endif
     for(int i = 0; i < hard_clause_numbered; i++){
         for(int j = 0; j < hard_clause_numbered_vector[i].size(); j++){
+            #ifdef LOCAL
             cout << hard_clause_numbered_vector[i][j] << " ";
+            #endif
 
             int temp = hard_clause_numbered_vector[i][j];
             for(int x = 0;x < deleteVertex.size();x++){
@@ -359,12 +390,18 @@ int main(){
                 }
             }
         }
+        #ifdef LOCAL
         puts("");
+        #endif
     }
+    #ifdef LOCAL
     puts("");
+    #endif
     for(int i = 0; i < soft_clause_numbered; i++){
         for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
+            #ifdef LOCAL
             cout << soft_clause_numbered_vector[i][j] << " ";
+            #endif
 
             int temp = soft_clause_numbered_vector[i][j];
             for(int x = 0;x < deleteVertex.size();x++){
@@ -373,11 +410,30 @@ int main(){
                 }
             }
         }
+        #ifdef LOCAL
         puts("");
+        #endif
     }
     
+    #ifdef LOCAL
     puts("-------------------------");
-    cout << "update clause: " << endl;
+    cout << "Update clause: " << endl;
+    #endif
+    cout << "p wcnf " << hard_clause_weight << endl;
+    for(int i = 0; i < soft_clause_numbered; i++){
+        int putFlag = 0;
+        for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
+            if(soft_clause_numbered_vector[i][j] != 0){
+                cout << soft_clause_numbered_vector[i][j] << " ";
+                putFlag = 1;
+            }
+        }
+        if(putFlag == 1){
+            cout << "0";
+            puts("");
+        }
+    }
+    puts("");
     for(int i = 0; i < hard_clause_numbered; i++){
         if(deleteVertexRow.count(i) == 0){
             int putFlag = 0;
@@ -390,22 +446,9 @@ int main(){
             if(putFlag == 1){
                 puts("");
             }
-            
         }
     }
-    puts("");
-    for(int i = 0; i < soft_clause_numbered; i++){
-        int putFlag = 0;
-        for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
-            if(soft_clause_numbered_vector[i][j] != 0){
-                cout << soft_clause_numbered_vector[i][j] << " ";
-                putFlag = 1;
-            }
-        }
-        if(putFlag == 1){
-            puts("");
-        }
-    }
-    system("pause");
+    cout << "over!" << endl;
+    // system("pause");
     return 0;
 }
