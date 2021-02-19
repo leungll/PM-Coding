@@ -1,7 +1,7 @@
 /*
  * @Author: Lili Liang
  * @Date: 2021-02-04 22:56:42
- * @LastEditTime: 2021-02-18 23:48:41
+ * @LastEditTime: 2021-02-19 11:04:31
  * @LastEditors: Please set LastEditors
  * @Description: Solver algorithm in #3 Paper
  * @FilePath: \Paper_3\PM-Coding.cpp
@@ -21,7 +21,7 @@ vector<ll> hard_clause[MAXN], soft_clause[MAXN];
 //numbered hard clause, soft clause
 vector<ll> hard_clause_numbered_vector[MAXN], soft_clause_numbered_vector[MAXN];
 
-int sortNumberedVertexMatrix[MAXN][30];
+ll sortNumberedVertexMatrix[MAXN][22];
 vector<ll> sortVertex, deleteVertex;
 set<ll> deleteVertexRow;
 
@@ -107,7 +107,7 @@ int main(){
     * Read file
     */ 
     string fileString;
-    fstream in("V4.wcnf", ios::in);
+    fstream in("V2.wcnf", ios::in);
     if(!in) {
         cout << "Read file error!" << endl;
     }
@@ -448,6 +448,7 @@ int main(){
             }
         }
     }
+
     cout << "over!" << endl;
     // system("pause");
     return 0;
