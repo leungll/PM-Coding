@@ -1,7 +1,7 @@
 /*
  * @Author: Lili Liang
  * @Date: 2021-02-04 22:56:42
- * @LastEditTime: 2021-02-19 11:04:31
+ * @LastEditTime: 2021-02-19 23:07:08
  * @LastEditors: Please set LastEditors
  * @Description: Solver algorithm in #3 Paper
  * @FilePath: \Paper_3\PM-Coding.cpp
@@ -15,15 +15,17 @@ const int MAXN = 1e6 + 10;
 
 // #define LOCAL
 
-ll numberedVertex[MAXN][22];
 //initial hard clause, soft clause
 vector<ll> hard_clause[MAXN], soft_clause[MAXN];
 //numbered hard clause, soft clause
 vector<ll> hard_clause_numbered_vector[MAXN], soft_clause_numbered_vector[MAXN];
 
-ll sortNumberedVertexMatrix[MAXN][22];
+//numbered vertex matrix, sort numbered vertex matrix
+ll numberedVertex[MAXN][22], sortNumberedVertexMatrix[MAXN][22];
 vector<ll> sortVertex, deleteVertex;
 set<ll> deleteVertexRow;
+
+set<ll> updateVertexSet;
 
 vector<string> Split(const string& str, const string& delim) {
 	vector<string> res;
@@ -51,6 +53,8 @@ vector<ll> SortVertexFunc1(int ver, int hard_clause_num){
     int sortVertexNum[MAXN];
     map<ll, ll> sortVertexMap;
     memset(sortVertexNum, 0, sizeof(sortVertexNum));
+
+    //sort vertexNum
     for(int i = 0; i < hard_clause_num;i++){
         for(int j = 0; j < hard_clause[i].size(); j++){
             int temp = abs(hard_clause[i][j]);
@@ -68,6 +72,8 @@ vector<ll> SortVertexFunc1(int ver, int hard_clause_num){
         pair<ll, ll> p(i, sortVertexNum[i]);
         sortVertexMap.insert(p);
     }
+
+    //sort vertexMap
     #ifdef LOCAL
     cout << "SortVertexMap:" << endl;
     #endif
@@ -78,15 +84,16 @@ vector<ll> SortVertexFunc1(int ver, int hard_clause_num){
         #ifdef LOCAL
         cout << itor -> first << " " << itor -> second << endl;
         #endif
+
         sortVertex.push_back(itor -> first);
     }
     return sortVertex;
 }
 
-// int main(int argc, char **argv) {
-//     int k = atoi(argv[2]);
-int main(){ 
-    int k = 3, sort = 1;
+int main(int argc, char **argv) {
+    int k = atoi(argv[2]), sort = atoi(argv[3]);
+// int main(){ 
+//     int k = 3, sort = 1;
 
     int ver, clauseNum, hard_clause_weight;
     string hard_clause_weight_string;
@@ -98,6 +105,8 @@ int main(){
     //number of numbered hard clause, soft_clause
     int hard_clause_numbered = 0, soft_clause_numbered = 0;
 
+    ll updateClauseNum = 0;
+
     // #ifdef LOCAL
     // cout << "Please enter the value of K, sort:";
     // cin >> k >> sort;
@@ -107,7 +116,8 @@ int main(){
     * Read file
     */ 
     string fileString;
-    fstream in("V2.wcnf", ios::in);
+    // fstream in("V4.wcnf", ios::in);
+    fstream in(argv[1]);
     if(!in) {
         cout << "Read file error!" << endl;
     }
@@ -340,6 +350,7 @@ int main(){
         puts("");
     }
     #endif
+    
     for(int i = 1;i <= k;i++){
         for(int j = 1;j <= k;j++){
             if(i < j){
@@ -415,41 +426,85 @@ int main(){
         #endif
     }
     
-    #ifdef LOCAL
-    puts("-------------------------");
-    cout << "Update clause: " << endl;
-    #endif
-    cout << "p wcnf " << hard_clause_weight << endl;
+    /*
+    * Calculate updateClauseNum, the size of the updateVertexSet
+    */
     for(int i = 0; i < soft_clause_numbered; i++){
         int putFlag = 0;
         for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
             if(soft_clause_numbered_vector[i][j] != 0){
-                cout << soft_clause_numbered_vector[i][j] << " ";
+                int temp = soft_clause_numbered_vector[i][j];
+                updateVertexSet.insert(abs(temp));
                 putFlag = 1;
             }
         }
         if(putFlag == 1){
-            cout << "0";
-            puts("");
+            updateClauseNum++;
         }
     }
-    puts("");
     for(int i = 0; i < hard_clause_numbered; i++){
         if(deleteVertexRow.count(i) == 0){
             int putFlag = 0;
             for(int j = 0; j < hard_clause_numbered_vector[i].size(); j++){
                 if(hard_clause_numbered_vector[i][j] != 0){
-                    cout << hard_clause_numbered_vector[i][j] << " ";
+                    int temp = hard_clause_numbered_vector[i][j];
+                    updateVertexSet.insert(abs(temp));
                     putFlag = 1;
                 }
             }
             if(putFlag == 1){
+                updateClauseNum++;
+            }
+        }
+    }
+    
+    /*
+    * Output
+    */
+    #ifdef LOCAL
+    puts("-------------------------");
+    cout << "Update clause: " << endl;
+    #endif
+    cout << "p wcnf " << updateVertexSet.size() << " " << updateClauseNum << " " << hard_clause_weight << endl;
+    for(int i = 0; i < soft_clause_numbered; i++){
+        int putEndFlag = 0, putFirstFlag = 0;
+        for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
+            if(soft_clause_numbered_vector[i][j] != 0){
+                if(putFirstFlag == 0){
+                    cout << "1 ";
+                    putFirstFlag = 1;
+                }
+                cout << soft_clause_numbered_vector[i][j] << " ";
+                putEndFlag = 1;
+            }
+        }
+        if(putEndFlag == 1){
+            cout << "0";
+            puts("");
+        }
+    }
+    for(int i = 0; i < hard_clause_numbered; i++){
+        if(deleteVertexRow.count(i) == 0){
+            int putEndFlag = 0, putFirstFlag = 0;
+            // cout << hard_clause_weight << " ";
+            for(int j = 0; j < hard_clause_numbered_vector[i].size(); j++){
+                if(hard_clause_numbered_vector[i][j] != 0){
+                    if(putFirstFlag == 0){
+                        cout << hard_clause_weight << " ";
+                        putFirstFlag = 1;
+                    }
+                    cout << hard_clause_numbered_vector[i][j] << " ";
+                    putEndFlag = 1;
+                }
+            }
+            if(putEndFlag == 1){
+                cout << "0";
                 puts("");
             }
         }
     }
 
-    cout << "over!" << endl;
+    // cout << "over!" << endl;
     // system("pause");
     return 0;
 }
