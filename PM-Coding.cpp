@@ -1,7 +1,7 @@
 /*
  * @Author: Lili Liang
  * @Date: 2021-02-04 22:56:42
- * @LastEditTime: 2021-02-19 23:07:08
+ * @LastEditTime: 2021-02-21 01:02:26
  * @LastEditors: Please set LastEditors
  * @Description: Solver algorithm in #3 Paper
  * @FilePath: \Paper_3\PM-Coding.cpp
@@ -21,7 +21,7 @@ vector<ll> hard_clause[MAXN], soft_clause[MAXN];
 vector<ll> hard_clause_numbered_vector[MAXN], soft_clause_numbered_vector[MAXN];
 
 //numbered vertex matrix, sort numbered vertex matrix
-ll numberedVertex[MAXN][22], sortNumberedVertexMatrix[MAXN][22];
+ll numberedVertex[MAXN][23], sortNumberedVertexMatrix[MAXN][23], updateNumberedVertex[MAXN][23];
 vector<ll> sortVertex, deleteVertex;
 set<ll> deleteVertexRow;
 
@@ -371,6 +371,26 @@ int main(int argc, char **argv) {
     }
     #endif
     
+    int num2 = 1, num3 = 1;
+    for(int i = 1; i <= ver; i++) {
+        for(int j = 1; j <= k; j++) {
+            if(count(deleteVertex.begin(), deleteVertex.end(), num2) == 0){
+                updateNumberedVertex[i][j] = num3;
+                num3++;
+            }
+            num2++;
+        }
+    }
+    #ifdef LOCAL
+    puts("-------------------------");
+    cout << "updateNumberedVertex:" << endl;
+    for(int i = 1; i <= ver; i++) {
+        for(int j = 1; j <= k; j++) {
+            cout << updateNumberedVertex[i][j] << " ";
+        }
+        puts("");
+    }
+    #endif
 
     /*
     * DeleteVertex
@@ -433,8 +453,18 @@ int main(int argc, char **argv) {
         int putFlag = 0;
         for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
             if(soft_clause_numbered_vector[i][j] != 0){
-                int temp = soft_clause_numbered_vector[i][j];
-                updateVertexSet.insert(abs(temp));
+                int ans;
+
+                //renumber the vertex
+                int temp = abs(soft_clause_numbered_vector[i][j]);
+                int line = temp / k + 1, row = temp % k;
+                if(row != 0){
+                    ans = updateNumberedVertex[line][row];
+                }else{
+                    ans = updateNumberedVertex[line - 1][k];
+                }
+
+                updateVertexSet.insert(abs(ans));
                 putFlag = 1;
             }
         }
@@ -447,8 +477,18 @@ int main(int argc, char **argv) {
             int putFlag = 0;
             for(int j = 0; j < hard_clause_numbered_vector[i].size(); j++){
                 if(hard_clause_numbered_vector[i][j] != 0){
-                    int temp = hard_clause_numbered_vector[i][j];
-                    updateVertexSet.insert(abs(temp));
+                    int ans;
+
+                    //renumber the vertex
+                    int temp = abs(hard_clause_numbered_vector[i][j]);
+                    int line = temp / k + 1, row = temp % k;
+                    if(row != 0){
+                        ans = updateNumberedVertex[line][row];
+                    }else{
+                        ans = updateNumberedVertex[line - 1][k];
+                    }
+                
+                    updateVertexSet.insert(abs(ans));
                     putFlag = 1;
                 }
             }
@@ -466,6 +506,7 @@ int main(int argc, char **argv) {
     cout << "Update clause: " << endl;
     #endif
     cout << "p wcnf " << updateVertexSet.size() << " " << updateClauseNum << " " << hard_clause_weight << endl;
+    //soft clause
     for(int i = 0; i < soft_clause_numbered; i++){
         int putEndFlag = 0, putFirstFlag = 0;
         for(int j = 0; j < soft_clause_numbered_vector[i].size(); j++){
@@ -474,7 +515,24 @@ int main(int argc, char **argv) {
                     cout << "1 ";
                     putFirstFlag = 1;
                 }
-                cout << soft_clause_numbered_vector[i][j] << " ";
+
+                //renumber the vertex
+                int temp = abs(soft_clause_numbered_vector[i][j]);
+                int line = temp / k + 1, row = temp % k;
+                if(row != 0){
+                    if(soft_clause_numbered_vector[i][j] > 0){
+                        cout << updateNumberedVertex[line][row] << " ";
+                    }else{
+                        cout << -updateNumberedVertex[line][row] << " ";
+                    }
+                }else{
+                    if(soft_clause_numbered_vector[i][j] > 0){
+                        cout << updateNumberedVertex[line - 1][k] << " ";
+                    }else{
+                        cout << -updateNumberedVertex[line - 1][k] << " ";
+                    }
+                }
+   
                 putEndFlag = 1;
             }
         }
@@ -483,17 +541,34 @@ int main(int argc, char **argv) {
             puts("");
         }
     }
+    //hard clause
     for(int i = 0; i < hard_clause_numbered; i++){
         if(deleteVertexRow.count(i) == 0){
             int putEndFlag = 0, putFirstFlag = 0;
-            // cout << hard_clause_weight << " ";
             for(int j = 0; j < hard_clause_numbered_vector[i].size(); j++){
                 if(hard_clause_numbered_vector[i][j] != 0){
                     if(putFirstFlag == 0){
                         cout << hard_clause_weight << " ";
                         putFirstFlag = 1;
                     }
-                    cout << hard_clause_numbered_vector[i][j] << " ";
+
+                    //renumber the vertex
+                    int temp = abs(hard_clause_numbered_vector[i][j]);
+                    int line = temp / k + 1, row = temp % k;
+                    if(row != 0){
+                        if(hard_clause_numbered_vector[i][j] > 0){
+                            cout << updateNumberedVertex[line][row] << " ";
+                        }else{
+                            cout << -updateNumberedVertex[line][row] << " ";
+                        }
+                    }else{
+                        if(hard_clause_numbered_vector[i][j] > 0){
+                            cout << updateNumberedVertex[line - 1][k] << " ";
+                        }else{
+                            cout << -updateNumberedVertex[line - 1][k] << " ";
+                        }
+                    }
+
                     putEndFlag = 1;
                 }
             }
