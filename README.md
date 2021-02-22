@@ -1,27 +1,26 @@
 <!--
  * @Author: Lili Liang
  * @Date: 2021-02-07 00:29:19
- * @LastEditTime: 2021-02-22 23:23:05
+ * @LastEditTime: 2021-02-22 23:27:44
  * @LastEditors: Please set LastEditors
  * @Description: Lili Liang
  * @FilePath: \Paper_3\PM-Coding\README.md
 -->
 # PM-Coding
-Solver algorithm in #3 Paper
 
-### 服务器地址
+### 1 服务器地址
 
 ```
 /home/zhoujp/liangll/PM_Coding
 ```
 
-### 执行方式
-#### 编译
+### 2 执行方式
+#### 2.1 编译
 ```
 g++ -std=c++11 PM-Coding.cpp -o PM-Coding
 ```
 
-#### 运行
+#### 2.2 运行
 ```
 ./PM-Coding XXX.XXX k 1
 ```
@@ -29,8 +28,8 @@ g++ -std=c++11 PM-Coding.cpp -o PM-Coding
 - `k` : 拓展变量个数
 - `1` : 第一种 `顶点排序方法`，目前暂定为 `1`
 
-### 变量编号举例
-#### 输入文件
+### 3 变量编号举例
+#### 3.1 输入文件
 - V2.wcnf 
 - k = 3
 ```
@@ -42,12 +41,12 @@ p wcnf 4 5 20
 1 -3 0
 ```
 
-#### 执行
+#### 3.2 执行
 ```
 ./PM-Coding V2.wcnf 3 1
 ```
 
-#### 编号
+#### 3.3 编号
 - 变量拓展
   ```
     X11 X12 X13     1  2  3
@@ -73,7 +72,7 @@ p wcnf 4 5 20
     ㄱX31                                          -6     
     ```
 
-#### 变量排序
+#### 3.4 变量排序
 - `{3, 1, 2, 4}`
 
 - ```
@@ -91,7 +90,7 @@ p wcnf 4 5 20
     X41 X42 X43     7  8  9
     ```
 
-#### 求解结果
+#### 3.5 求解结果
 - hard clause
     ```
     X11 ∨ X31                  1  6
@@ -106,7 +105,7 @@ p wcnf 4 5 20
     ㄱX31 ∨ ㄱX32 ∨ ㄱX33               -6
     ```
 
-#### 输出文件
+#### 3.6 输出文件
 ```
 p wcnf 7 6 20
 1 -1 -2 3 4 5 0
