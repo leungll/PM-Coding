@@ -1,7 +1,7 @@
 <!--
  * @Author: Lili Liang
  * @Date: 2021-02-07 00:29:19
- * @LastEditTime: 2021-02-22 23:20:51
+ * @LastEditTime: 2021-02-22 23:23:05
  * @LastEditors: Please set LastEditors
  * @Description: Lili Liang
  * @FilePath: \Paper_3\PM-Coding\README.md
@@ -73,17 +73,16 @@ p wcnf 4 5 20
     ㄱX31                                          -6     
     ```
 
-#### 求解结果
-- 变量排序
-    - `{3, 1, 2, 4}`
+#### 变量排序
+- `{3, 1, 2, 4}`
 
-    - ```
-        X31 X32 X33     
-        X11 X12 X13     
-        X21 X22 X23       
-        X41 X42 X43     
-      ```
-    -  `X32 = X33 = X13 = 0`
+- ```
+    X31 X32 X33     
+    X11 X12 X13     
+    X21 X22 X23       
+    X41 X42 X43     
+  ```
+-  `X32 = X33 = X13 = 0`
 - 对拓展变量重新编号
     ```
     X11 X12         1  2  
@@ -92,6 +91,7 @@ p wcnf 4 5 20
     X41 X42 X43     7  8  9
     ```
 
+#### 求解结果
 - hard clause
     ```
     X11 ∨ X31                  1  6
