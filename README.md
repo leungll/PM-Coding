@@ -1,9 +1,9 @@
 <!--
  * @Author: Lili Liang
  * @Date: 2021-02-07 00:29:19
- * @LastEditTime: 2021-02-22 23:16:30
+ * @LastEditTime: 2021-02-22 23:20:51
  * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
+ * @Description: Lili Liang
  * @FilePath: \Paper_3\PM-Coding\README.md
 -->
 # PM-Coding
@@ -25,9 +25,9 @@ g++ -std=c++11 PM-Coding.cpp -o PM-Coding
 ```
 ./PM-Coding XXX.XXX k 1
 ```
-- `XXX.XXX` :输入文件
-- `k` :拓展变量个数
-- `1` :第一种 `顶点排序方法`，目前暂定为 `1`
+- `XXX.XXX` : 输入文件
+- `k` : 拓展变量个数
+- `1` : 第一种 `顶点排序方法`，目前暂定为 `1`
 
 ### 变量编号举例
 #### 输入文件
@@ -68,9 +68,9 @@ p wcnf 4 5 20
 
 - soft clause
     ```
-    ㄱX11 ∨ ㄱX12 ∨ ㄱX13 ∨ X21 ∨ X22 ∨ X23   -1 -2 -3 4 5 6 
-    ㄱX21 ∨ ㄱX22 ∨ ㄱX23                             -4 -5 -6
-    ㄱX31 ∨ ㄱX32 ∨ ㄱX33                             -7 -8 -9
+    ㄱX11 ∨ ㄱX12 ∨ ㄱX13 ∨ X21 ∨ X22 ∨ X23    -1 -2 -3 4 5 6 
+    ㄱX21 ∨ ㄱX22 ∨ ㄱX23                         -4 -5 -6
+    ㄱX31                                          -6     
     ```
 
 #### 求解结果
@@ -106,7 +106,7 @@ p wcnf 4 5 20
     ㄱX31 ∨ ㄱX32 ∨ ㄱX33               -6
     ```
 
-### 输出文件
+#### 输出文件
 ```
 p wcnf 7 6 20
 1 -1 -2 3 4 5 0
