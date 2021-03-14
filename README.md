@@ -41,7 +41,7 @@ p wcnf 4 5 20
 ./PM-Coding V2.wcnf 3 1
 ```
 
-### Number
+### Serial Number
 - Extended Variables
   ```
     X11 X12 X13                                   1  2  3
