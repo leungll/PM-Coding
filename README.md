@@ -18,9 +18,9 @@ g++ -std=c++11 PM-Coding.cpp -o PM-Coding
 ```
 ./PM-Coding XXX.XXX K 1
 ```
-- `XXX.XXX` : 输入文件
-- `K` : 拓展变量个数
-- `1` : 第一种 `顶点排序方法`，目前暂定为 `1`
+- `XXX.XXX` : input file
+- `K` : number of extended variables
+- `1` : the first `vertex sorting method` , currently tentatively `1`
 
 ## Example of Variable Numbering
 ### Input File
@@ -42,7 +42,7 @@ p wcnf 4 5 20
 ```
 
 ### Number
-- 变量拓展
+- Extended Variables
   ```
     X11 X12 X13                                   1  2  3
     X21 X22 X23                                   4  5  6
@@ -77,7 +77,7 @@ p wcnf 4 5 20
   X41 X42 X43     
   ```
 -  `X32 = X33 = X13 = 0`
-- 对拓展变量重新编号
+- Renumber the Extension Variable
     ```
     X11 X12         1  2  
     X21 X22 X23     3  4  5
