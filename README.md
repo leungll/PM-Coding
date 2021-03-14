@@ -1,7 +1,7 @@
 # PM-Coding
 Solver algorithm in #3 Paper: Diversified Top-k MaxSAT Solving with MaxSAT.
 
-![GitHub last commit](https://img.shields.io/github/last-commit/leungll/PM-Coding?color=red&style=flat-square) ![maven](https://img.shields.io/badge/C%2B%2B11-passing-yellow) ![GitHub repo size](https://img.shields.io/github/repo-size/leungll/PM-Coding?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/leungll/PM-Coding?color=red&style=flat-square) ![maven](https://img.shields.io/badge/C%2B%2B11-passing-yellow) ![GitHub](https://img.shields.io/github/license/leungll/PM-Coding?color=orange&style=flat-square) ![GitHub repo size](https://img.shields.io/github/repo-size/leungll/PM-Coding?style=flat-square)
 
 ## Server Address
 ```
